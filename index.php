@@ -50,7 +50,7 @@ $context = stream_context_create(array(
 
 //	ストリームの取得
 try {
-	$stream = fopen($request_path . $path, 'r', false, $context);
+	$stream = fopen($request_path . $path, 'rb', false, $context);
 } catch (Exception $e) {
 	//	$e->getMessage()
 	//	  fopen(http://localhost:8080/): failed to open stream: Connection refused
@@ -65,16 +65,34 @@ if ($stream == false) {
 	exit;
 }
 
-//	レスポンスヘッダをそのままクライアントへ帰す
+//	レスポンスヘッダをクライアントへ返す
+//	ついでにbody部のサイズも取得
 $header = stream_get_meta_data($stream)['wrapper_data'];
+$content_length = -1;
 foreach ($header as $h) {
+	list($key, $value) = explode(' ', $h);
+	//	これを消すと2回目以降の読み込みが遅くなる！？
+	if ($key == 'Last-Modified:') continue;
+	if ($key == 'Content-Length:') {
+		$content_length = (int)$value;
+	}
 	header($h);
 }
 
-//	レスポンスbody部をクライアントへ帰す
-while (!feof($stream)) {
-	echo fread($stream, 1024);
-	ob_flush();
+//	レスポンスbody部をクライアントへ返す
+if ($content_length != 0) {
+	$read_size = 0;
+	while (!feof($stream)) {
+		$content = fread($stream, 8192);
+		echo $content;
+		ob_flush();
+
+		$read_size += strlen($content);
+		if (
+			strlen($content) == 0 ||
+			$content_length != -1 && $read_size == $content_length
+		) break;
+	}
 }
 ob_end_flush();
 
