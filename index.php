@@ -9,7 +9,7 @@ $this_path = '/proxy'; //	このPHPを格納しているURL上のパス
  *	例)http://hogehoge.jp/
  *	例)http://hogehoge.jp/~user/
  */
-$request_path = 'http://localhost:8080';
+$request_path = 'http://localhost:8080/';
 
 //	エラー時に例外をスローするように登録
 set_error_handler(function ($errno, $errstr, $errfile, $errline) {
@@ -28,7 +28,7 @@ if ($this_path != '' && strpos($path, $this_path) == 0) {
 $header_text = "";
 foreach (apache_request_headers() as $name => $value) {
 	if ($name == 'Host') continue;
-	$header_text .= "{$name}: {$value}\n";
+	$header_text .= "{$name}: {$value}\r\n";
 }
 
 //	POSTメソッド等のbody部を読み込み
