@@ -28,6 +28,7 @@ if ($this_path != '' && strpos($path, $this_path) == 0) {
 $header_text = "";
 foreach (apache_request_headers() as $name => $value) {
 	if ($name == 'Host') continue;
+	if ($name == 'Referer') continue;	//	これがないと403を返すサーバあり(StarServerFree)
 	$header_text .= "{$name}: {$value}\r\n";
 }
 
