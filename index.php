@@ -44,7 +44,8 @@ $context = stream_context_create(array(
 		'method' => $_SERVER['REQUEST_METHOD'],
 		'content' => $content,
 		'header' => $header_text,
-		"ignore_errors" => true, //400番台等もエラーを出さない
+		'ignore_errors' => true,	//	400番台等もエラーを出さない
+		'max_redirects' => 0,		//	リダイレクトを自動で処理しない
 	),
 ));
 
