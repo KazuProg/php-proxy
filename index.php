@@ -19,7 +19,7 @@ set_error_handler(function ($errno, $errstr, $errfile, $errline) {
 	throw new ErrorException($errstr, $errno, 0, $errfile, $errline);
 });
 
-$path = urldecode($_SERVER['REQUEST_URI']);
+$path = $_SERVER['REQUEST_URI'];
 if ($this_path != '' && strpos($path, $this_path) == 0) {
 	$path = substr($path, strlen($this_path));
 }
